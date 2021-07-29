@@ -9,7 +9,8 @@ https://arxiv.org/abs/2107.11627
 
 How to use: 
   - Check the demo.py file
-  - The generation of correlation matrix for point spread functions is slow. You can download the correlation matrices prepared by us and put them under the data folder. The correlation matrices are available at __________________. 
+  - The generation of correlation matrix for point spread functions is slow. You can download the correlation matrices prepared by us and put them under the data folder. The correlation matrices are available at: 
+    https://drive.google.com/file/d/1W5yyXiPQSKssIwIdsIMofBN7eZ9nuApx/view?usp=sharing
 
 If you find our work helpful in your research, please consider cite our paper
 
