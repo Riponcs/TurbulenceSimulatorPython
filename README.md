@@ -28,6 +28,6 @@ Please also check out our other work on Atmospheric Turbulence:
   
     https://engineering.purdue.edu/ChanGroup/project_turbulence.html
   
-  - Code for iamge reconstruction through atmospheric turbulence: 
+  - Code for image reconstruction through atmospheric turbulence: 
   
     https://github.itap.purdue.edu/StanleyChanGroup/TurbRecon_TCI
