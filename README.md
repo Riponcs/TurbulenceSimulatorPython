@@ -28,6 +28,6 @@ Please also check out our other work on Atmospheric Turbulence:
   
     https://engineering.purdue.edu/ChanGroup/project_turbulence.html
   
-  - Reconstruction of static and dynamic scene through atmospheric turbulence: 
+  - Code for iamge reconstruction through atmospheric turbulence: 
   
-    _________________________________________________________________
+    https://github.itap.purdue.edu/StanleyChanGroup/TurbRecon_TCI
