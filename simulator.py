@@ -62,7 +62,7 @@ class Simulator(nn.Module):
 
 
     def forward(self, img): 
-        img_pad = F.pad(img.view((-1,1,self.img_size,self.img_size)), (16,16,16,16), mode = 'reflect')
+        img_pad = F.pad(img.reshape((-1,1,self.img_size,self.img_size)), (16,16,16,16), mode = 'reflect') #instead of View
         img_mean = F.conv2d(img_pad, self.mu).squeeze()
         dict_img = F.conv2d(img_pad, self.dict_psf)
         random_ = torch.sqrt(self.Dr0 ** (5 / 3))*torch.randn((self.initial_grid**2*36),1,device=self.device)
@@ -75,8 +75,8 @@ class Simulator(nn.Module):
         weight = weight.view((self.img_size,self.img_size,100)).permute(2,0,1)# target: (100,512,512)
         out = torch.sum(weight.unsqueeze(0)*dict_img,1) + img_mean
                 
-        MVx = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2)
-        MVy = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2)
+        MVx = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2) # Changed with fft addition
+        MVy = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2) # Changed with fft addition
         pos = torch.stack((MVx[:,:,0],MVy[:,:,1]),2) * self.const
         flow = self.grid+pos
         flow = 2.0*flow / (self.img_size-1) - 1.0
