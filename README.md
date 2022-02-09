@@ -33,3 +33,5 @@ Please also check out our other work on Atmospheric Turbulence:
   - Code for image reconstruction through atmospheric turbulence: 
   
     https://github.itap.purdue.edu/StanleyChanGroup/TurbRecon_TCI
+
+The soruce of Oiringal Repository: https://github.itap.purdue.edu/StanleyChanGroup/TurbulenceSim_P2S
