@@ -4,6 +4,8 @@ This repository contains the code for the following paper:
 
 Zhiyuan Mao, Nicholas Chimitt, and Stanley H. Chan, ‘‘Accelerating Atmospheric Turbulence Simulation via Learned Phase-to-Space Transform’’, accepted to ICCV 2021
 
+The soruce of Oiringal Repository: https://github.itap.purdue.edu/StanleyChanGroup/TurbulenceSim_P2S
+
 Arxiv: 
 https://arxiv.org/abs/2107.11627
 
