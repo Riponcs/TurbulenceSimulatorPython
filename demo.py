@@ -9,23 +9,12 @@ Arxiv: https://arxiv.org/abs/2107.11627
 Zhiyuan Mao, Nicholas Chimitt, and Stanley H. Chan
 Copyright 2021
 Purdue University, West Lafayette, IN, USA
-
-
-Ripon - I'm Using demo.py to generate the Turbulence Images using same strength.
-  
 '''
 
-from torch import int8
 from simulator import Simulator
-from turbStats import tilt_mat, corr_mat
+from turbStats import tilt_mat, corr_mat, get_r0
 import matplotlib.pyplot as plt
 import torch
-import glob
-import numpy as np
-from PIL import Image
-import cv2
-import os
-from tqdm import tqdm
 
 # Select device.
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('CPU')
@@ -40,59 +29,37 @@ matrix from our website.
 https://engineering.purdue.edu/ChanGroup/project_turbulence.html
 '''
 
-Folder = 'G:/Research/Turbulence/RAFT/RAFT/datasets/Sintel-perfect_ratio/**/*.png'
-Existing = 'Sintel-perfect_ratio'
-NewFolder = 'Sintel-perfect_ratio-Tur'
-
-strength = 5
+# Uncomment the following line to generate correlation matrix
+# corr_mat(-0.1,'./data/')
 
 # Load image, permute axis if color
-# x = plt.imread('./images/color.png')
-imgList = [a.replace('\\', '/') for a in glob.glob(Folder, recursive=True)]
-x = plt.imread(imgList[0])
+x = plt.imread('./images/color.png')
 
-width = x.shape[1]
-height = x.shape[0]
+if len(x.shape) == 3: 
+    x = x.transpose((2,0,1))
+x = torch.tensor(x, device = device, dtype=torch.float32)
 
-# Uncomment the following line to generate correlation matrix
-#corr_mat(-0.1,'./data/')
+D = 0.1
+L = 3000
+# r0 can also be calculated from Cn2 and L using the get_r0 function: 
+# r0 = get_r0(Cn2, L)
+r0 = 0.05
 
+im_size = x.shape[1] # The current version works for square image only
 
 # Generate correlation matrix for tilt. Do this once for each different turbulence parameter. 
-tilt_mat(width, 0.1, 0.02, 3000)
-print('Tilt Map generated')
+tilt_mat(im_size, D, r0, L)
 
+# Simulate. 
+simulator = Simulator(D/r0, im_size).to(device, dtype=torch.float32)
 
+# Note that the current version does not support batched images. Only one frame at a time. 
+out = simulator(x).detach().cpu().numpy()
 
+if len(out.shape) == 3: 
+    out = out.transpose((1,2,0))
 
-print('Now Start processing each Imges')
-for aimg in tqdm(imgList):
-    x = plt.imread(aimg)
-    
-    #print(x.shape[0], width)
-    
-    if x.shape[0]!=width:
-        x = cv2.resize(x, (height,width), interpolation=cv2.INTER_CUBIC)
-    
-    if len(x.shape) == 3: 
-        x = x.transpose((2,0,1))
-    x = torch.tensor(x, device = device, dtype=torch.float32)
-    
-    # Simulate
-    simulator = Simulator(strength, width).to(device, dtype=torch.float32)
-    
-    out = simulator(x).detach().cpu().numpy()
-    
-    if len(out.shape) == 3: 
-        out = out.transpose((1,2,0))
-    
-    out = np.clip(out, 0, 1)
-    #print('\t\tChanged to = ',out.min(), out.max())    
-    # save image
-    NewFolderName = aimg.replace(Existing, NewFolder).rsplit('/', 1)[0]
-    os.makedirs(NewFolderName, exist_ok=True)
-    plt.imsave(aimg.replace(Existing, NewFolder), out)
-    
-    #plt.imsave(aimg.replace(Existing, NewFolder).replace('.jpeg', f'_{strength}_{width}.png'),out)
+# save image
+plt.imsave('./images/out.png',out)
 
 

@@ -108,6 +108,17 @@ def tilt_mat(N, D, r0, L, save_path = './data', thre = 0.002, adj = 1, use_temp 
     else: 
         np.save(os.path.join(save_path,'S_half-size_{}-D_r0_{:.4f}.npy'.format(N,D_r0)),data)
 
+        
+def get_r0(Cn2, L, lbd=0.5e-6): 
+    r0 = ((0.423 * (2*np.pi/lbd)**2) * Cn2 * integrate.quad(_f,0,L,args=L)[0]) ** (-3/5)
+    
+    return r0
+
+
+def _f(z,L): 
+    return (z/L)**(5/3)
+        
+        
 def _nollToZernInd(j):
     """
     Authors: Tim van Werkhoven, Jason Saredy

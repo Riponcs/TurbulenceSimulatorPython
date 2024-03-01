@@ -1,5 +1,5 @@
 '''
-This file contains the codes for the P2S module and the simulator. 
+This file contains the codes for the P2S module and the simulator. Note that this file works for pytorch 1.4. use simulator.py for latest pytorch. 
 
 Z. Mao, N. Chimitt, and S. H. Chan, "Accerlerating Atmospheric Turbulence 
 Simulation via Learned Phase-to-Space Transform", ICCV 2021
@@ -74,11 +74,12 @@ class Simulator(nn.Module):
         
         weight = weight.view((self.img_size,self.img_size,100)).permute(2,0,1)# target: (100,512,512)
         out = torch.sum(weight.unsqueeze(0)*dict_img,1) + img_mean
-
-        pos = torch.fft.irfft2((self.S_half.permute(1, 2, 0).unsqueeze(0) * torch.randn(1, self.img_size,
-                         self.img_size, 2, device=self.device)), s=(self.img_size,self.img_size), dim=(1,2)) * self.const
-    
-        flow = 2.0*(self.grid+pos) / (self.img_size-1) - 1.0
+                
+        MVx = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2)
+        MVy = torch.ifft((self.S_half*torch.randn(self.img_size,self.img_size,device=self.device)).permute(1,2,0),2)
+        pos = torch.stack((MVx[:,:,0],MVy[:,:,0]),2) * self.const
+        flow = self.grid+pos
+        flow = 2.0*flow / (self.img_size-1) - 1.0
         out = F.grid_sample(out.view((1,-1,self.img_size,self.img_size)), flow, 'bilinear', padding_mode='border', align_corners=False).squeeze()
 
         return out
